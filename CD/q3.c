@@ -27,7 +27,7 @@ int is_keyword(const char *token) {
 /* Print token in uppercase */
 void print_upper(const char *token) {
     for (int i = 0; token[i]; i++)
-        putchar(toupper(token[i]));
+        putchar(toupper((unsigned char)token[i]));
     putchar('\n');
 }
 
@@ -40,11 +40,11 @@ void lexical_analyze(const char *filename) {
 
     int ch, next;
     char token[MAX_TOKEN_LEN];
-    int idx = 0;
+    int idx;
 
     while ((ch = fgetc(fp)) != EOF) {
 
-        /* -------- Handle comments -------- */
+        /* ---------- Handle comments ---------- */
         if (ch == '/') {
             next = fgetc(fp);
 
@@ -56,11 +56,11 @@ void lexical_analyze(const char *filename) {
 
             /* Multi-line comment */
             if (next == '*') {
+                int prev = 0;
                 while ((ch = fgetc(fp)) != EOF) {
-                    if (ch == '*' && (next = fgetc(fp)) == '/')
+                    if (prev == '*' && ch == '/')
                         break;
-                    else
-                        ungetc(next, fp);
+                    prev = ch;
                 }
                 continue;
             }
@@ -68,25 +68,29 @@ void lexical_analyze(const char *filename) {
             ungetc(next, fp);
         }
 
-        /* -------- Skip string literals -------- */
+        /* ---------- Skip string literals ---------- */
         if (ch == '"') {
             while ((ch = fgetc(fp)) != EOF) {
                 if (ch == '\\')
-                    fgetc(fp);   // escape sequence
+                    fgetc(fp);      /* escape */
                 else if (ch == '"')
                     break;
             }
             continue;
         }
 
-        /* -------- Skip character literals -------- */
+        /* ---------- Skip character literals ---------- */
         if (ch == '\'') {
-            fgetc(fp); // character
-            fgetc(fp); // closing '
+            while ((ch = fgetc(fp)) != EOF) {
+                if (ch == '\\')
+                    fgetc(fp);      /* escape */
+                else if (ch == '\'')
+                    break;
+            }
             continue;
         }
 
-        /* -------- Identifier or Keyword -------- */
+        /* ---------- Identifier / Keyword ---------- */
         if (isalpha(ch) || ch == '_') {
             idx = 0;
             token[idx++] = ch;

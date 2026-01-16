@@ -1,5 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
+
+
 
 void discard_preprocessor_directives(const char *input_file,
                                      const char *output_file)
@@ -21,7 +21,7 @@ void discard_preprocessor_directives(const char *input_file,
 
     while ((ch = fgetc(in)) != EOF) {
 
-        /* ---------- Handle strings ---------- */
+        
         if (!in_comment && ch == '"' && !in_char) {
             in_string = !in_string;
             if (!in_directive) fputc(ch, out);
@@ -29,7 +29,7 @@ void discard_preprocessor_directives(const char *input_file,
             continue;
         }
 
-        /* ---------- Handle character literals ---------- */
+        
         if (!in_comment && ch == '\'' && !in_string) {
             in_char = !in_char;
             if (!in_directive) fputc(ch, out);
