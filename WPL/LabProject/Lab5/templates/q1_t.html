@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Details Entry</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .result-area { background-color: #e9ecef; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+  <div class="container">
+    <a class="navbar-brand" href="#">Lab 5</a>
+    <div class="navbar-nav">
+      <a class="nav-link" href="/lab5/q1/">Q1: Student Form</a>
+      <a class="nav-link" href="/lab5/q2/">Q2: Promotion Check</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h2 class="text-center mb-4 text-primary">Student Records System</h2>
+            
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Enter Student Details</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Student Name</label>
+                                <input type="text" class="form-control" name="name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="dob" class="form-label">Date of Birth</label>
+                                <input type="date" class="form-control" name="dob" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea class="form-control" name="address" rows="2" required></textarea>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="contact" class="form-label">Contact Number</label>
+                                <input type="tel" class="form-control" name="contact" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email ID</label>
+                                <input type="email" class="form-control" name="email" required>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+                        <h6 class="text-secondary mb-3">Academic Marks</h6>
+
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <label for="english" class="form-label">English</label>
+                                <input type="number" class="form-control" name="english" min="0" max="100" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="physics" class="form-label">Physics</label>
+                                <input type="number" class="form-control" name="physics" min="0" max="100" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="chemistry" class="form-label">Chemistry</label>
+                                <input type="number" class="form-control" name="chemistry" min="0" max="100" required>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Submit Details</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">Submission Output</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Formatted Details:</label>
+                        <textarea class="form-control result-area" rows="5" readonly>{{ details_log }}</textarea>
+                    </div>
+
+                    <div class="alert alert-info d-flex align-items-center" role="alert">
+                        <span class="me-2">Total Percentage:</span>
+                        <span class="badge bg-success fs-5">
+                            {% if percentage %}
+                                {{ percentage }}%
+                            {% else %}
+                                0%
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
