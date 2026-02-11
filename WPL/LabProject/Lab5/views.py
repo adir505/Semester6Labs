@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from datetime import datetime, date
+import random
+import string
 
 def student_view(request):
     context = {}
@@ -24,6 +26,7 @@ def student_view(request):
         context['percentage'] = percentage
 
     return render(request, 'q1_t.html', context)
+
 def employee_view(request):
     result = None
     
@@ -43,3 +46,45 @@ def employee_view(request):
                 result = "NO"
 
     return render(request, 'q2_t.html', {'result': result})
+
+def generate_captcha(length=5):
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
+
+
+def captcha_view(request):
+    result = None
+    disabled = False
+
+    if request.method == 'GET':
+        request.session['captcha_attempts'] = 0
+        request.session['captcha_value'] = generate_captcha()
+
+    attempts = request.session.get('captcha_attempts', 0)
+
+    if request.method == 'POST':
+        if attempts >= 3:
+            disabled = True
+            result = "Too many failed attempts. CAPTCHA disabled."
+        else:
+            user_input = request.POST.get('captcha_input', '').strip().upper()
+            captcha_value = request.session.get('captcha_value')
+
+            if user_input == captcha_value:
+                result = "CAPTCHA validation successful!"
+                request.session['captcha_attempts'] = 0
+                request.session['captcha_value'] = generate_captcha()
+            else:
+                attempts += 1
+                request.session['captcha_attempts'] = attempts
+                request.session['captcha_value'] = generate_captcha()
+                result = "CAPTCHA validation failed."
+
+        if attempts >= 3:
+            disabled = True
+
+    return render(request, 'q3_t.html', {
+        'result': result,
+        'captcha': request.session['captcha_value'],
+        'disabled': disabled,
+        'attempts': attempts
+    })

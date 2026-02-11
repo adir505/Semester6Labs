@@ -9,3 +9,7 @@ CD/CD_Lab_Manual_2026.pdf
 .aider*
 CD/*.exe
 PCAP/PCAPLab3/q3
+WPL/LabProject/Lab5/__pycache__
+WPL/LabProject/LabProject/__pycache__
+WPL/LabProject/db.sqlite3
+.python-version
