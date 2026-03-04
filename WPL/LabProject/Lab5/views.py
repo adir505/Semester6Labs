@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from datetime import datetime, date
 import random
 import string
+from .forms import TextFormatterForm
 
 def student_view(request):
     context = {}
@@ -87,4 +88,45 @@ def captcha_view(request):
         'captcha': request.session['captcha_value'],
         'disabled': disabled,
         'attempts': attempts
+    })
+
+
+def forms_view(request):
+    result_html = None
+    css_style = ""
+    
+    if request.method == 'POST':
+        form = TextFormatterForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            message = form.cleaned_data['message']
+            styles = form.cleaned_data['styles']
+            color = form.cleaned_data['color']
+
+            # Build CSS string based on selection
+            style_list = []
+            
+            # Color logic
+            style_list.append(f"color: {color};")
+            
+            # Style logic
+            if 'bold' in styles:
+                style_list.append("font-weight: bold;")
+            if 'italic' in styles:
+                style_list.append("font-style: italic;")
+            if 'underline' in styles:
+                style_list.append("text-decoration: underline;")
+            
+            css_style = " ".join(style_list)
+            
+            # Concatenate for display (matching the screenshot format)
+            result_html = f"Name: {name} <br> Message: {message}"
+            
+    else:
+        form = TextFormatterForm()
+
+    return render(request, 'form_t.html', {
+        'form': form,
+        'result': result_html,
+        'css_style': css_style
     })

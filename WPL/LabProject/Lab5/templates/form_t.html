@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text Formatter</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .container { display: flex; gap: 20px; }
+        .form-section { border: 1px dotted #ccc; padding: 20px; }
+        
+        /* Layout for the inputs */
+        .form-row { margin-bottom: 10px; }
+        
+        /* Make lists (radios/checkboxes) horizontal to match image */
+        ul { list-style-type: none; padding: 0; margin: 0; display: inline-flex; gap: 10px;}
+        
+        /* The result label area */
+        .result-label {
+            margin-top: 20px;
+            font-size: 1.2em;
+            border: 1px solid #ddd;
+            padding: 10px;
+            display: inline-block;
+            min-width: 200px;
+        }
+
+        .buttons { margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="form-section">
+        <form method="POST" id="mainForm">
+            {% csrf_token %}
+            
+            <div class="form-row">
+                <label>{{ form.name.label }}:</label>
+                {{ form.name }}
+            </div>
+
+            <div class="form-row" style="margin-left: 100px;">
+                {{ form.styles }} <br>
+                {{ form.color }}
+            </div>
+
+            <div class="form-row">
+                <label>{{ form.message.label }}:</label><br>
+                {{ form.message }}
+            </div>
+
+            <div class="buttons">
+                <button type="submit">Display</button>
+                
+                <button type="button" onclick="clearForm()">Clear</button>
+                
+                <button type="button" onclick="exitApp()">Exit</button>
+            </div>
+        </form>
+
+        {% if result %}
+            <div class="result-label" style="{{ css_style }}">
+                {{ result|safe }}
+            </div>
+        {% else %}
+            <div class="result-label" id="placeholderLabel">
+                Label3
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function clearForm() {
+            // Reset the form inputs
+            document.getElementById("mainForm").reset();
+            
+            // If there is a server-rendered result, redirect to clean URL (GET request)
+            // to clear the Python context.
+            window.location.href = "{% url 'forms_view' %}";
+        }
+
+        function exitApp() {
+            // In a web browser, scripts can only close windows that were opened by a script.
+            // Standard workaround is to show an alert or redirect to a blank page/google.
+            if(confirm("Are you sure you want to exit?")) {
+                window.close(); // May not work in modern browsers due to security
+                document.body.innerHTML = "<h1>Application Exited</h1>";
+            }
+        }
+    </script>
+</body>
+</html>
